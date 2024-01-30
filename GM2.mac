@@ -5,12 +5,12 @@
 /run/verbose 2
 
 #
-/Physics/addPhysics  LowE_Livermore	# em physics
+###/Physics/addPhysics  LowE_Livermore	# em physics
 ###/testem/phys/addPhysics  emstandard_opt3  	# em physics 
 
 /run/setCut 1 mm 
 
-/score/create/boxMesh Tumor
+/score/create/boxMesh Tumor_{runID}
 /score/mesh/boxSize 2.025 2.025 0.025 cm
 # Translation / Rotation of scoring mesh
 /score/mesh/translate/xyz 0. 0. 0. cm
@@ -32,9 +32,8 @@
 #/control/execute vis.mac
 /run/printProgress 1
 #
-/run/beamOn 9999999999
+/run/beamOn 200000000
 #
-/score/dumpQuantityToFile Tumor eDep eDep.txt
-#/score/dumpQuantityToFile Tumor cellFlux cellflux.txt
+/score/dumpQuantityToFile Tumor_{runID} eDep eDep_{runID}.txt
 
 

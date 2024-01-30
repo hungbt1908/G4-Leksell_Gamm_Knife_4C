@@ -156,7 +156,7 @@ int main(int argc,char** argv)
   }
   else  {  
     // interactive mode : define UI session
-    UImanager->ApplyCommand("/control/execute GM2.mac");
+    UImanager->ApplyCommand("/control/execute init_vis.mac");
     ui->SessionStart();
     delete ui;
   }
