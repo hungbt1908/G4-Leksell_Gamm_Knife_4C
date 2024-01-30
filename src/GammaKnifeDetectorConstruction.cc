@@ -282,7 +282,14 @@ G4VPhysicalVolume* GammaKnifeDetectorConstruction::DefineVolumes()
 	logic_shielding3->SetVisAttributes(G4VisAttributes::GetInvisible());*/
 	solid_secondary_collimator = new G4Cons("solid_secondary_collimator", 0. /*will be set later*/, 0.9 * cm, 0. /*will be set later*/, 0.9 * cm, 3 * cm, 0 * deg, 360 * deg);
 	logic_secondary_collimator = new G4LogicalVolume(solid_secondary_collimator, Tungsten, "logic_secondary_collimator");
+
 	new G4PVPlacement(0, G4ThreeVector(0., 0., 19.5 * cm), logic_secondary_collimator, "physic_secondary_collimator", logicWorld, false, 0, check_overlap);
+	
+	G4RotationMatrix* Rot1 = new G4RotationMatrix;
+	Rot1->rotateY(266.25 * deg);
+	Rot1->rotateZ(84 * deg);
+
+	new G4PVPlacement(Rot1, G4ThreeVector(0., 0., 19.5 * cm), logic_secondary_collimator, "physic_secondary_collimator", logicWorld, false, 1, check_overlap);
 
 	// ------------------------------------------------------------------------------------------
 	// Water phantom
