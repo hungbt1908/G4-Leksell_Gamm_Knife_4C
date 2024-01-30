@@ -53,7 +53,10 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/*.hh)
 set(GAMMA_SCRIPTS
   defaultMacro.mac
   GPS.in
+  gui.mac
+  init_vis.mac
   simulation.mac
+  vis.mac
   )
 
 foreach(_script ${GAMMA_SCRIPTS})
