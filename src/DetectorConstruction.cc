@@ -21,7 +21,7 @@
 #include "G4VisAttributes.hh"
 
 DetectorConstruction::DetectorConstruction()
-  : G4VUserDetectorConstruction()
+  : G4VUserDetectorConstruction(), helmetSize(4)
 {
   	pDetectorMessenger = new DetectorMessenger(this); 
 }
