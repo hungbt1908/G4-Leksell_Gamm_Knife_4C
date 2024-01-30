@@ -31,6 +31,7 @@
 #include "GammaKnifePrimaryGeneratorAction.hh"
 #include "GammaKnifeRunAction.hh"
 #include "GammaKnifeEventAction.hh"
+#include "GammmaKnifeSteppingAction.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -59,9 +60,11 @@ void GammaKnifeActionInitialization::Build() const
 
   GammaKnifeEventAction* eventAction = new GammaKnifeEventAction();
   SetUserAction(eventAction);
+
   GammaKnifeRunAction* runAction = new GammaKnifeRunAction;
   SetUserAction(runAction);
 
+  SetUserAction(new GammaKnifeSteppingAction(eventAction));
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -44,10 +44,10 @@ target_link_libraries(GammaKnife ${Geant4_LIBRARIES})
 #
 set(EXAMPLEGammaKnife_SCRIPTS
   GPS.in
-  GM2.mac
-  vis.mac
   init_vis.mac
-  MachineAngle.in
+  run.mac
+  simulation.mac
+  vis.mac
   )
 
 foreach(_script ${EXAMPLEGammaKnife_SCRIPTS})
