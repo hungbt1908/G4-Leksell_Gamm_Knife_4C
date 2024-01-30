@@ -9,7 +9,8 @@
 # --------------------------------------------------------------------------------  
 
 # Visulisation
-/control/verbose 1
+/control/verbose 2
+/control/saveHistory
 /run/verbose 2
 
 # Use this open statement to create an OpenGL view:

@@ -91,7 +91,7 @@ void MyDetectorConstruction::DefineMaterials()
 	Cobalt_Color->SetForceSolid(true);
 
 	// Print materials
-	//G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+	G4cout << *(G4Material::GetMaterialTable()) << G4endl;
 }
 
 
