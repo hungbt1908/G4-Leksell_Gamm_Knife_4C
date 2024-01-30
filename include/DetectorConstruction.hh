@@ -14,6 +14,7 @@ class PhantomSD;
 class PhantomROGeometry;
 class DetectorMessenger;
 class G4Box;
+class G4Cons;
 
 class DetectorConstruction : public G4VUserDetectorConstruction 
 {
@@ -56,6 +57,7 @@ public:
     G4Box* solidWorld;
     G4LogicalVolume* logicWorld;
     G4VPhysicalVolume* physWorld;
+    G4Cons* solidSecondaryCollimator;
 
     G4int helmetSize; // helmet size (4, 8, 14, 18)
     G4int NS; // source number

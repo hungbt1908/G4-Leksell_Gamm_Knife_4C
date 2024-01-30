@@ -248,9 +248,10 @@ void DetectorConstruction::ConstructPrimaryCollimator()
 
 void DetectorConstruction::ConstructSecondaryCollimator()
 {
-	G4Cons* solidSecondaryCollimator = new G4Cons("solidSecondaryCollimator", 0. /*will be set later*/, 0.9*cm, 0. /*will be set later*/, 0.9*cm, 3*cm, 0*deg, 360*deg);
+	solidSecondaryCollimator = new G4Cons("solidSecondaryCollimator", 0. /*will be set later*/, 0.9*cm, 0. /*will be set later*/, 0.9*cm, 3*cm, 0*deg, 360*deg);
+	UpdateHelmet();
 	G4LogicalVolume* logicSecondaryCollimator = new G4LogicalVolume(solidSecondaryCollimator, Tungsten, "logicSecondaryCollimator");
-	new G4PVPlacement(0, G4ThreeVector(0., 0., 19.5 * cm), logicSecondaryCollimator, "physSecondaryCollimator", logicWorld, false, 0, checkOverlap);
+	new G4PVPlacement(0, G4ThreeVector(0., 0., 19.5*cm), logicSecondaryCollimator, "physSecondaryCollimator", logicWorld, false, 0, checkOverlap);
 }
 
 void DetectorConstruction::ConstructLGK()
@@ -268,6 +269,61 @@ void DetectorConstruction::ConstructPhantom()
 	G4Orb* solid_phantom = new G4Orb("solid_phantom", 8.0 * cm);
 	G4LogicalVolume* logic_phantom = new G4LogicalVolume(solid_phantom, Water, "logic_phantom");
 	new G4PVPlacement(0, G4ThreeVector(), logic_phantom, "physic_phantom", logicWorld, false, 0, checkOverlap);
+}
+
+void DetectorConstruction::SetHelmetSize(G4int size)
+{
+	if (size != helmetSize) // Only if the size changes
+	{
+		// Allow only valid numbers
+		switch (size)
+		{
+		case 18:
+		case 14:
+		case 8:
+		case 4:
+			helmetSize = size;
+			G4cout << "Helmet size set to " << helmetSize << std::endl;
+			UpdateHelmet();
+			break;
+		default:
+			G4Exception("GammaKnifeDetectorConstruction::SetHelmetSize()",
+				"GammaKnife001", FatalException,
+				"Error: Invalid helmet size.");
+
+		}
+	}
+}
+
+void DetectorConstruction::UpdateHelmet()
+{
+	if(solidSecondaryCollimator)
+	{
+		switch (helmetSize)
+		{
+		case 18:
+			solidSecondaryCollimator->SetInnerRadiusMinusZ(5.3*mm);
+			solidSecondaryCollimator->SetInnerRadiusPlusZ(4.15*mm);
+			break;
+
+		case 14:
+			solidSecondaryCollimator->SetInnerRadiusMinusZ(4.25*mm);
+			solidSecondaryCollimator->SetInnerRadiusPlusZ(3.15*mm);
+			break;
+
+		case 8:
+			solidSecondaryCollimator->SetInnerRadiusMinusZ(2.5*mm);
+			solidSecondaryCollimator->SetInnerRadiusPlusZ(1.9*mm);
+			break;
+
+		case 4:
+			solidSecondaryCollimator->SetInnerRadiusMinusZ(1.25*mm);
+			solidSecondaryCollimator->SetInnerRadiusPlusZ(1*mm);
+			break;
+		}
+		// Inform the run manager about change in the geometry
+		G4RunManager::GetRunManager()->GeometryHasBeenModified();
+	}
 }
 
 void DetectorConstruction::PrintInformation()
