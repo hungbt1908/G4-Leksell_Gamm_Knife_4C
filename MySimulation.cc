@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 	G4Random::setTheSeed(seconds);
 
 	auto* runManager = G4RunManagerFactory::CreateRunManager();
-	G4int nThreads = 40;
+	G4int nThreads = 4;
 	runManager->SetNumberOfThreads(nThreads);
 
 	G4ScoringManager::GetScoringManager(); // This enables scoring

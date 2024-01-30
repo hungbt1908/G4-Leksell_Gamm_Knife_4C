@@ -1,0 +1,26 @@
+/control/verbose 0
+/run/verbose 0
+
+/score/create/boxMesh Tumor
+/score/mesh/boxSize 2 2 2 cm
+# Translation / Rotation of scoring mesh
+/score/mesh/translate/xyz 0. 0. 0. cm
+/score/mesh/rotate/rotateX 0 deg          # Note: Hack to enable rotations
+/score/mesh/nBin 80 80 80
+/score/quantity/energyDeposit eDep
+/score/close
+/score/list
+
+/run/initialize
+
+/control/execute GPS.in
+
+#
+#/control/execute vis.mac
+#/run/printProgress 1
+#
+/run/beamOn 5000
+#
+/score/dumpQuantityToFile Tumor eDep eDep.txt
+
+

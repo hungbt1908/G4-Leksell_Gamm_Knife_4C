@@ -5,6 +5,7 @@
 
 #include "MyPrimaryGenerator.hh"
 #include "MyRunAction.hh"
+#include "MyEventAction.hh"
 
 #include "G4GeneralParticleSource.hh"
 #include "G4ParticleTable.hh"

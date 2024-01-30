@@ -39,7 +39,7 @@ private:
 	void DefineMaterials();
 	G4VPhysicalVolume* DefineVolumes();
 
-	G4bool check_overlap = true;
+	G4bool check_overlap = false;
 
 public:
 	// Solid volume
