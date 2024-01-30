@@ -1,8 +1,7 @@
-# Macro file for the initialization of example B4
+# Macro file for the initialization of example B1
 # in interactive session
 #
 # Set some default verbose
-#
 /control/verbose 2
 /control/saveHistory
 /run/verbose 2
@@ -15,3 +14,6 @@
 #
 # Visualization setting
 /control/execute vis.mac
+
+
+

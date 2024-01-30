@@ -1,27 +1,37 @@
-#include "MyDetectorConstruction.hh"
+#include "GammaKnifeDetectorConstruction.hh"
 
-MyDetectorConstruction::MyDetectorConstruction()
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+G4ThreadLocal
+G4GlobalMagFieldMessenger* GammaKnifeDetectorConstruction::fMagFieldMessenger = 0;
+
+
+GammaKnifeDetectorConstruction::GammaKnifeDetectorConstruction()
+	: G4VUserDetectorConstruction()
+	, helmetSize(4)
 {
-	// Messenger to change parameters of the geometry
-	detectorMessenger = new MyDetectorMessenger(this);
+	detectorMessenger = new GammaKnifeDetectorMessenger(this);
 }
 
-MyDetectorConstruction::~MyDetectorConstruction()
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+GammaKnifeDetectorConstruction::~GammaKnifeDetectorConstruction()
 {
 	delete detectorMessenger;
 }
 
-G4VPhysicalVolume *MyDetectorConstruction::Construct()
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+G4VPhysicalVolume* GammaKnifeDetectorConstruction::Construct()
 {
-
 	// Define materials 
 	DefineMaterials();
-
+	//ReadFile("MachineAngle.in");
 	// Define volumes
 	return DefineVolumes();
 }
 
-void MyDetectorConstruction::DefineMaterials()
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void GammaKnifeDetectorConstruction::DefineMaterials()
 {
 	// NIST
 	G4NistManager* nist = G4NistManager::Instance();
@@ -59,7 +69,7 @@ void MyDetectorConstruction::DefineMaterials()
 	G4Element* elFe = G4NistManager::Instance()->FindOrBuildElement("Fe");
 	G4Element* elNi = G4NistManager::Instance()->FindOrBuildElement("Ni");
 	G4Element* elMo = G4NistManager::Instance()->FindOrBuildElement("Mo");
-	
+
 	Stainless_Steel = new G4Material("Stainless Steel", 7.80 * g / cm3, 9 /* components */);
 	Stainless_Steel->AddElement(elC, 0.026 * perCent);
 	Stainless_Steel->AddElement(elSi, 0.42 * perCent);
@@ -91,11 +101,13 @@ void MyDetectorConstruction::DefineMaterials()
 	Cobalt_Color->SetForceSolid(true);
 
 	// Print materials
-	//G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+	G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+
 }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4VPhysicalVolume* MyDetectorConstruction::DefineVolumes()
+G4VPhysicalVolume* GammaKnifeDetectorConstruction::DefineVolumes()
 {
 	// ------------------------------------------------------------------------------------------
 	// Mother world volume
@@ -111,7 +123,7 @@ G4VPhysicalVolume* MyDetectorConstruction::DefineVolumes()
 	// ------------------------------------------------------------------------------------------
 	// Sphere shielding No.1 contain source block
 	// ------------------------------------------------------------------------------------------
-	
+
 	// Activate core
 	solid_activate_core = new G4Tubs("solid_activate_core", 0. * deg, 0.05 * cm, 1.0 * cm, 0 * deg, 360 * deg);
 	logic_activate_core = new G4LogicalVolume(solid_activate_core, Cobalt, "logic_activate_core");
@@ -236,7 +248,7 @@ G4VPhysicalVolume* MyDetectorConstruction::DefineVolumes()
 	logic_shielding1 = new G4LogicalVolume(logic_shielding1_subtraction, Iron, "logic_shielding1");
 	new G4PVPlacement(0, G4ThreeVector(), logic_shielding1, "physic_shielding1", logicWorld, false, 0, check_overlap);
 	//logic_shielding1->SetVisAttributes(G4VisAttributes::GetInvisible());*/
-	
+
 
 	// ------------------------------------------------------------------------------------------
 	// Sphere shielding No.2 contain primary collimator
@@ -271,7 +283,7 @@ G4VPhysicalVolume* MyDetectorConstruction::DefineVolumes()
 	solid_secondary_collimator = new G4Cons("solid_secondary_collimator", 0. /*will be set later*/, 0.9 * cm, 0. /*will be set later*/, 0.9 * cm, 3 * cm, 0 * deg, 360 * deg);
 	logic_secondary_collimator = new G4LogicalVolume(solid_secondary_collimator, Tungsten, "logic_secondary_collimator");
 	new G4PVPlacement(0, G4ThreeVector(0., 0., 19.5 * cm), logic_secondary_collimator, "physic_secondary_collimator", logicWorld, false, 0, check_overlap);
-	
+
 	// ------------------------------------------------------------------------------------------
 	// Water phantom
 	// ------------------------------------------------------------------------------------------	
@@ -280,32 +292,46 @@ G4VPhysicalVolume* MyDetectorConstruction::DefineVolumes()
 	new G4PVPlacement(0, G4ThreeVector(), logic_phantom, "physic_phantom", logicWorld, false, 0, check_overlap);
 
 	return physWorld;
+
 }
 
-void MyDetectorConstruction::UpdateHelmet()
+void GammaKnifeDetectorConstruction::ConstructSDandField() {
+
+
+	G4ThreeVector fieldValue;
+	fMagFieldMessenger = new G4GlobalMagFieldMessenger(fieldValue);
+	fMagFieldMessenger->SetVerboseLevel(1);
+
+	// Register the field messenger for deleting
+	G4AutoDelete::Register(fMagFieldMessenger);
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+
+void GammaKnifeDetectorConstruction::UpdateHelmet()
 {
 	if (solid_secondary_collimator)
 	{
 		switch (helmetSize)
 		{
 		case 18:
-			solid_secondary_collimator->SetInnerRadiusMinusZ(4.15 * mm);
-			solid_secondary_collimator->SetInnerRadiusPlusZ(5.3 * mm);
+			solid_secondary_collimator->SetInnerRadiusMinusZ(5.3 * mm);
+			solid_secondary_collimator->SetInnerRadiusPlusZ(4.15 * mm);
 			break;
 
 		case 14:
-			solid_secondary_collimator->SetInnerRadiusMinusZ(3.15 * mm);
-			solid_secondary_collimator->SetInnerRadiusPlusZ(4.25 * mm);
+			solid_secondary_collimator->SetInnerRadiusMinusZ(4.25 * mm);
+			solid_secondary_collimator->SetInnerRadiusPlusZ(3.15 * mm);
 			break;
 
 		case 8:
-			solid_secondary_collimator->SetInnerRadiusMinusZ(1.9 * mm);
-			solid_secondary_collimator->SetInnerRadiusPlusZ(2.5 * mm);
+			solid_secondary_collimator->SetInnerRadiusMinusZ(2.5 * mm);
+			solid_secondary_collimator->SetInnerRadiusPlusZ(1.9 * mm);
 			break;
 
 		case 4:
-			solid_secondary_collimator->SetInnerRadiusMinusZ(1. * mm);
-			solid_secondary_collimator->SetInnerRadiusPlusZ(1.25 * mm);
+			solid_secondary_collimator->SetInnerRadiusMinusZ(1.25 * mm);
+			solid_secondary_collimator->SetInnerRadiusPlusZ(1 * mm);
 			break;
 		}
 		// Inform the run manager about change in the geometry
@@ -313,7 +339,7 @@ void MyDetectorConstruction::UpdateHelmet()
 	}
 }
 
-void MyDetectorConstruction::SetHelmetSize(G4int size)
+void GammaKnifeDetectorConstruction::SetHelmetSize(G4int size)
 {
 	if (size != helmetSize) // Only if the size changes
 	{
@@ -332,7 +358,7 @@ void MyDetectorConstruction::SetHelmetSize(G4int size)
 			G4Exception("GammaKnifeDetectorConstruction::SetHelmetSize()",
 				"GammaKnife001", FatalException,
 				"Error: Invalid helmet size.");
-			return;
+
 		}
 	}
 }

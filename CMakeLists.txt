@@ -1,10 +1,8 @@
+
 #----------------------------------------------------------------------------
 # Setup the project
-cmake_minimum_required(VERSION 3.8...3.18)
-if(${CMAKE_VERSION} VERSION_LESS 3.12)
-  cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
-endif()
-project(MySimulation)
+cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+project(GammaKnife)
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
@@ -25,6 +23,7 @@ endif()
 include(${Geant4_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
+
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 # NB: headers are included so they will show up in IDEs
@@ -35,31 +34,23 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(sim MySimulation.cc ${sources} ${headers})
-target_link_libraries(sim ${Geant4_LIBRARIES})
-
-#----------------------------------------------------------------------------
-# Locate sources and headers for this project
-# NB: headers are included so they will show up in IDEs
-#
-file(GLOB sources ${PROJECT_SOURCE_DIR}/*.cc)
-file(GLOB headers ${PROJECT_SOURCE_DIR}/*.hh)
+add_executable(GammaKnife GammaKnife.cc ${sources} ${headers})
+target_link_libraries(GammaKnife ${Geant4_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
-# build. This is so that we can run the executable directly because it
+# build GammaKnife. This is so that we can run the executable directly because it
 # relies on these scripts being in the current working directory.
 #
-set(GAMMA_SCRIPTS
-  defaultMacro.mac
+set(EXAMPLEGammaKnife_SCRIPTS
   GPS.in
-  gui.mac
-  init_vis.mac
-  simulation.mac
+  GM2.mac
   vis.mac
+  init_vis.mac
+  MachineAngle.in
   )
 
-foreach(_script ${GAMMA_SCRIPTS})
+foreach(_script ${EXAMPLEGammaKnife_SCRIPTS})
   configure_file(
     ${PROJECT_SOURCE_DIR}/${_script}
     ${PROJECT_BINARY_DIR}/${_script}
@@ -71,5 +62,11 @@ endforeach()
 # For internal Geant4 use - but has no effect if you build this
 # example standalone
 #
-add_custom_target(MySimulation DEPENDS sim)
+add_custom_target(GM DEPENDS GammaKnife)
+
+#----------------------------------------------------------------------------
+# Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
+#
+install(TARGETS GammaKnife DESTINATION bin)
+
 
